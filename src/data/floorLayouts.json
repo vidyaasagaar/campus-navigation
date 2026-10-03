@@ -1,0 +1,57 @@
+{
+  "template": {
+    "id": "standard-classroom-floor",
+    "source": "user-provided (master spec §36, 2026-10-03)",
+    "verified": false,
+    "classrooms": { "west": 2, "east": 3 },
+    "specialRooms": [
+      { "key": "HOD", "name": "HOD Room", "type": "hod", "side": "south" },
+      { "key": "STAFF", "name": "Staff Room", "type": "staff", "side": "south" }
+    ],
+    "hodStaffOrder": null,
+    "notes": "Conceptual arrangement only. Exact room positions, corridor shape, door locations, staircase/lift locations and all indoor distances are not yet collected."
+  },
+  "blocks": [
+    {
+      "blockId": "block-a",
+      "letter": "A",
+      "floors": [0, 1, 2, 3, 4, 5],
+      "floorsVerified": false,
+      "floorsNote": "Six storeys counted from reference photo 1. Not confirmed whether the ground floor follows the classroom layout.",
+      "roomNumbers": {},
+      "lift": null
+    },
+    {
+      "blockId": "block-b",
+      "letter": "B",
+      "floors": [0, 1, 2, 3, 4, 5],
+      "floorsVerified": false,
+      "floorsNote": "Six storeys counted from reference photo 1. Not confirmed whether the ground floor follows the classroom layout.",
+      "roomNumbers": {},
+      "lift": null
+    },
+    {
+      "blockId": "block-c",
+      "letter": "C",
+      "floors": [0, 1, 2, 3, 4, 5],
+      "floorsVerified": false,
+      "floorsNote": "Six storeys counted from reference photo 1. Not confirmed whether the ground floor follows the classroom layout.",
+      "roomNumbers": {},
+      "lift": null
+    }
+  ],
+  "dataStillRequired": [
+    "Exact classroom numbers",
+    "Exact classroom positions",
+    "Corridor shape",
+    "Door locations",
+    "HOD Room exact position",
+    "Staff Room exact position",
+    "Staircase locations",
+    "Lift locations",
+    "Ramp locations",
+    "Floor-to-floor distances",
+    "Accessible entrances",
+    "Room-to-corridor distances"
+  ]
+}

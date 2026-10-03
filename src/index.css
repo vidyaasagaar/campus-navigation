@@ -1,0 +1,107 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --color-ink: #0b1724;
+  --color-ink-2: #13243a;
+  --color-paper: #f4f1ea;
+  --color-route: #f2552c;
+  --color-muted: #8a97a8;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #070e17;
+  color: #e8edf3;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass {
+  background: rgb(11 23 36 / 0.78);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 18px 50px -18px rgb(0 0 0 / 0.6);
+}
+
+.ctrl {
+  height: 2.25rem;
+  min-width: 2.25rem;
+  border-radius: 0.75rem;
+  background: rgb(255 255 255 / 0.06);
+  padding: 0 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.15s, filter 0.15s;
+}
+.ctrl:hover {
+  background: rgb(255 255 255 / 0.12);
+  filter: brightness(1.08);
+}
+
+.label-pill {
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate3d(-50%, -100%, 0);
+}
+
+select option {
+  background: #0b1724;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Keyboard focus is always visible (spec §34.13). */
+:focus-visible {
+  outline: 2px solid #ffd27a;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Larger text: rem-based Tailwind sizes scale with the root font size. */
+:root[data-text='large'] {
+  font-size: 18px;
+}
+:root[data-text='large'] .text-\[10px\],
+:root[data-text='large'] .text-\[10\.5px\],
+:root[data-text='large'] .text-\[11px\],
+:root[data-text='large'] .text-\[11\.5px\],
+:root[data-text='large'] .text-xs {
+  font-size: 13px;
+}
+:root[data-text='large'] .text-\[12px\],
+:root[data-text='large'] .text-\[12\.5px\],
+:root[data-text='large'] .text-\[13px\],
+:root[data-text='large'] .text-sm {
+  font-size: 15px;
+}
+
+/* High contrast: solid panels, stronger text and borders (spec §34.13). */
+:root[data-contrast='high'] .glass {
+  background: #000;
+  backdrop-filter: none;
+  border: 2px solid #fff;
+}
+:root[data-contrast='high'] [class*='text-white\/'] {
+  color: #fff !important;
+}
+:root[data-contrast='high'] [class*='border-white\/'] {
+  border-color: #fff !important;
+}
+:root[data-contrast='high'] .label-pill {
+  background: #000 !important;
+  color: #fff !important;
+  outline: 2px solid #fff;
+}

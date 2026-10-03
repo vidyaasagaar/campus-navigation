@@ -1,0 +1,970 @@
+{
+  "campus": {
+    "id": "mrtc",
+    "name": "MRTC",
+    "fullName": "Malla Reddy Vishwavidyapeeth – Technical Campus",
+    "address": "Maisammaguda, Bhadurpalle, Hyderabad, Telangana 500100",
+    "googlePlaceCoordinate": {
+      "lat": 17.5595798,
+      "lng": 78.4596369
+    },
+    "origin": {
+      "lat": 17.5597,
+      "lng": 78.4565
+    },
+    "identifiedBy": "Google Maps place 'MALLA REDDY VISHWAVIDYAPEETH - TECHNICAL CAMPUS' from the link supplied by the user (2026-10-03)"
+  },
+  "locations": [
+    {
+      "id": "block-a",
+      "name": "Block A",
+      "type": "academic",
+      "entrance": {
+        "lat": 17.559519,
+        "lng": 78.459281
+      },
+      "identification": "user-confirmed: west half of the joined twin block (photo 1)",
+      "accessibleFrontEntrance": true,
+      "accessibilitySource": "user-provided (spec v2 §40.1): wheelchair access available at the front"
+    },
+    {
+      "id": "block-b",
+      "name": "Block B",
+      "type": "academic",
+      "entrance": {
+        "lat": 17.559386,
+        "lng": 78.459597
+      },
+      "identification": "user-confirmed: east half of the joined twin block (photo 1)",
+      "accessibleFrontEntrance": true,
+      "accessibilitySource": "user-provided (spec v2 §40.1): wheelchair access available at the front"
+    },
+    {
+      "id": "block-c",
+      "name": "Block C",
+      "type": "academic",
+      "entrance": {
+        "lat": 17.559264,
+        "lng": 78.460086
+      },
+      "identification": "user-confirmed: separate block east of the twin block (photo 1)",
+      "accessibleFrontEntrance": false,
+      "accessibilitySource": "user-provided (spec v2 §40.1): front access currently not wheelchair accessible"
+    },
+    {
+      "id": "canteen",
+      "name": "Canteen",
+      "type": "facility",
+      "entrance": {
+        "lat": 17.559077,
+        "lng": 78.460859
+      },
+      "identification": "user-confirmed: the green-roof 'Central Kitchen' beside Block C (Google Maps place at 17.5588224, 78.4610537); entrance point on its west face, facing Block C"
+    },
+    {
+      "id": "girls-hostel",
+      "name": "Girls Hostel",
+      "type": "hostel",
+      "entrance": {
+        "lat": 17.559734,
+        "lng": 78.458648
+      },
+      "identification": "user-confirmed: building #5 on the reference map (photo 2). Note: Google Maps reverse-geocodes this point as 'MRCE BOYS HSOEL' — please double-check."
+    },
+    {
+      "id": "boys-hostel",
+      "name": "Boys Hostel",
+      "type": "hostel",
+      "entrance": {
+        "lat": 17.55843,
+        "lng": 78.45758
+      },
+      "identification": "user-confirmed: NIAT Boys Hostel (Google Maps place at 17.558399, 78.4574014), south-west of the Girls Hostel beside the court; entrance point on its east face. 3D model reuses the Girls Hostel structure (user-approved)."
+    },
+    {
+      "id": "jn-hostel-road",
+      "name": "Hostel road junction",
+      "type": "junction",
+      "entrance": {
+        "lat": 17.559651,
+        "lng": 78.458672
+      },
+      "identification": "Where the Girls Hostel entrance meets the internal road. Position read from Google satellite imagery (2026-10-03)."
+    },
+    {
+      "id": "jn-lane-north",
+      "name": "Lane junction (north)",
+      "type": "junction",
+      "entrance": {
+        "lat": 17.559636,
+        "lng": 78.458067
+      },
+      "identification": "West end of the hostel road, top of the lane beside the sports ground. Position read from Google satellite imagery (2026-10-03)."
+    },
+    {
+      "id": "jn-lane-south",
+      "name": "Lane junction (south)",
+      "type": "junction",
+      "entrance": {
+        "lat": 17.559329,
+        "lng": 78.458131
+      },
+      "identification": "Lane meets the tree-lined road along the box cricket court. Position read from Google satellite imagery (2026-10-03)."
+    },
+    {
+      "id": "bike-parking",
+      "name": "Bike Parking",
+      "type": "parking",
+      "entrance": {
+        "lat": 17.55924,
+        "lng": 78.459225
+      },
+      "identification": "User-provided: in front of Block A. Placed under the tree line south of the Block A forecourt; exact extent unverified."
+    },
+    {
+      "id": "car-parking",
+      "name": "Car Parking",
+      "type": "parking",
+      "entrance": {
+        "lat": 17.559138,
+        "lng": 78.459547
+      },
+      "identification": "User-provided: in front of Block B. Placed under the tree line south of the Block B forecourt; exact extent unverified."
+    },
+    {
+      "id": "volleyball-court",
+      "name": "Volleyball Court",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.55915,
+        "lng": 78.45912
+      },
+      "identification": "User-provided: south of the parking. West half of the field south of the parking — west/east order vs kabaddi is an assumption to confirm. Point is the court's north edge."
+    },
+    {
+      "id": "kabaddi-court",
+      "name": "Kabaddi Court",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.55906,
+        "lng": 78.459461
+      },
+      "identification": "User-provided: south of the parking. East half of the field south of the parking — order vs volleyball is an assumption to confirm. Point is the court's north edge."
+    },
+    {
+      "id": "running-track",
+      "name": "Running Track",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.558814,
+        "lng": 78.460242
+      },
+      "identification": "User-provided: surrounds the football court in front of Block C; outline visible in satellite imagery. Point is the track's north edge."
+    },
+    {
+      "id": "football-court",
+      "name": "Football Court",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.55872,
+        "lng": 78.460212
+      },
+      "identification": "User-provided: in front of Block C (photo 3 shows the turf). Point is the turf's north edge, inside the track."
+    },
+    {
+      "id": "box-cricket",
+      "name": "Box Cricket",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.558807,
+        "lng": 78.457927
+      },
+      "identification": "User-provided: dark-green court in front of the Boys Hostel; visible in satellite imagery. Point is the gate side on the lane (east edge)."
+    },
+    {
+      "id": "badminton-court",
+      "name": "Badminton Court",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.55948,
+        "lng": 78.4581
+      },
+      "identification": "User-provided: on the bare ground east of the box cricket, toward the back of the Girls Hostel. West half of that ground; access from the lane."
+    },
+    {
+      "id": "basketball-court",
+      "name": "Basketball Court",
+      "type": "sports",
+      "entrance": {
+        "lat": 17.559625,
+        "lng": 78.45876
+      },
+      "identification": "User-provided: on the same bare ground, east half (beside the sports area / nearer volleyball & kabaddi); access from the hostel road."
+    }
+  ],
+  "connections": [
+    {
+      "from": "block-a",
+      "to": "block-b",
+      "distanceMeters": 36.67,
+      "source": "google-maps-measure-distance",
+      "measurementType": "forecourt",
+      "verified": false,
+      "walkable": true,
+      "confidence": "high",
+      "crossCheck": "Repeat Measure-tool reading at zoom 20: 36.98 m",
+      "notes": "Straight across the paved forecourt in front of the twin block, entrance to entrance.",
+      "path": [
+        [
+          17.559519,
+          78.459281
+        ],
+        [
+          17.559386,
+          78.459597
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-b",
+      "to": "block-c",
+      "distanceMeters": 53.38,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": "Google Maps walking directions: 46 m",
+      "notes": "East along the forecourt, across the service road, to the front of Block C.",
+      "path": [
+        [
+          17.559386,
+          78.459597
+        ],
+        [
+          17.559315,
+          78.459869
+        ],
+        [
+          17.559264,
+          78.460086
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-a",
+      "to": "block-c",
+      "distanceMeters": 96.73,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "Along the southern edge of the forecourt (palm row), bypassing the Block B entrance.",
+      "path": [
+        [
+          17.559519,
+          78.459281
+        ],
+        [
+          17.55933,
+          78.45942
+        ],
+        [
+          17.559315,
+          78.459869
+        ],
+        [
+          17.559264,
+          78.460086
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-c",
+      "to": "canteen",
+      "distanceMeters": 84.78,
+      "source": "google-maps-measure-distance",
+      "measurementType": "forecourt",
+      "verified": false,
+      "walkable": true,
+      "confidence": "high",
+      "crossCheck": null,
+      "notes": "From the front of Block C east across the paved yard (between the palm rows) to the west face of the Central Kitchen.",
+      "path": [
+        [
+          17.559264,
+          78.460086
+        ],
+        [
+          17.559206,
+          78.460301
+        ],
+        [
+          17.559135,
+          78.460623
+        ],
+        [
+          17.559077,
+          78.460859
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-a",
+      "to": "basketball-court",
+      "distanceMeters": 57.26,
+      "source": "google-maps-measure-distance",
+      "measurementType": "road",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": "A → Girls Hostel total 76.72 m (earlier single-edge reading 76.73 m; directions 71 m)",
+      "notes": "West along the internal road from the Block A forecourt to the basketball court gate.",
+      "path": [
+        [
+          17.559519,
+          78.459281
+        ],
+        [
+          17.559517,
+          78.459071
+        ],
+        [
+          17.559625,
+          78.45876
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "basketball-court",
+      "to": "jn-hostel-road",
+      "distanceMeters": 10.08,
+      "source": "google-maps-measure-distance",
+      "measurementType": "road",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "Along the hostel road.",
+      "path": [
+        [
+          17.559625,
+          78.45876
+        ],
+        [
+          17.559651,
+          78.458672
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "jn-hostel-road",
+      "to": "girls-hostel",
+      "distanceMeters": 9.38,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "From the road to the Girls Hostel entrance.",
+      "path": [
+        [
+          17.559651,
+          78.458672
+        ],
+        [
+          17.559734,
+          78.458648
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "jn-hostel-road",
+      "to": "jn-lane-north",
+      "distanceMeters": 64.29,
+      "source": "google-maps-measure-distance",
+      "measurementType": "road",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "West along the hostel road past the MRCE blocks.",
+      "path": [
+        [
+          17.559651,
+          78.458672
+        ],
+        [
+          17.559636,
+          78.458067
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "jn-lane-north",
+      "to": "badminton-court",
+      "distanceMeters": 17.52,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "South down the lane beside the sports ground.",
+      "path": [
+        [
+          17.559636,
+          78.458067
+        ],
+        [
+          17.55948,
+          78.4581
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "badminton-court",
+      "to": "jn-lane-south",
+      "distanceMeters": 17.3,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "South down the lane to the tree-lined road.",
+      "path": [
+        [
+          17.55948,
+          78.4581
+        ],
+        [
+          17.559329,
+          78.458131
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "jn-lane-south",
+      "to": "box-cricket",
+      "distanceMeters": 61.95,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "Along the east side of the box cricket court.",
+      "path": [
+        [
+          17.559329,
+          78.458131
+        ],
+        [
+          17.559114,
+          78.458034
+        ],
+        [
+          17.558807,
+          78.457927
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "box-cricket",
+      "to": "boys-hostel",
+      "distanceMeters": 63.79,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": "Girls → Boys Hostel via junctions 234.23 m (earlier single-edge reading 234.21 m)",
+      "notes": "Continue along the court to the NIAT Boys Hostel's east face.",
+      "path": [
+        [
+          17.558807,
+          78.457927
+        ],
+        [
+          17.55848,
+          78.45782
+        ],
+        [
+          17.55843,
+          78.45758
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-c",
+      "to": "running-track",
+      "distanceMeters": 52.88,
+      "source": "google-maps-measure-distance",
+      "measurementType": "forecourt",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "South from Block C between the palm rows to the north edge of the track.",
+      "path": [
+        [
+          17.559264,
+          78.460086
+        ],
+        [
+          17.559109,
+          78.460135
+        ],
+        [
+          17.558814,
+          78.460242
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "running-track",
+      "to": "football-court",
+      "distanceMeters": 11.33,
+      "source": "google-maps-measure-distance",
+      "measurementType": "track",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "Across the track band onto the turf.",
+      "path": [
+        [
+          17.558814,
+          78.460242
+        ],
+        [
+          17.55872,
+          78.460212
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-a",
+      "to": "bike-parking",
+      "distanceMeters": 31.79,
+      "source": "google-maps-measure-distance",
+      "measurementType": "road",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "From the Block A forecourt across the road to the bike parking.",
+      "path": [
+        [
+          17.559519,
+          78.459281
+        ],
+        [
+          17.55924,
+          78.459225
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "block-b",
+      "to": "car-parking",
+      "distanceMeters": 28.44,
+      "source": "google-maps-measure-distance",
+      "measurementType": "road",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "From the Block B forecourt across the road to the car parking.",
+      "path": [
+        [
+          17.559386,
+          78.4596
+        ],
+        [
+          17.559138,
+          78.459547
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "bike-parking",
+      "to": "car-parking",
+      "distanceMeters": 35.97,
+      "source": "google-maps-measure-distance",
+      "measurementType": "road",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "Along the parking strip under the trees.",
+      "path": [
+        [
+          17.55924,
+          78.459225
+        ],
+        [
+          17.559138,
+          78.459547
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "bike-parking",
+      "to": "volleyball-court",
+      "distanceMeters": 15.3,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "South from the bike parking onto the field.",
+      "path": [
+        [
+          17.55924,
+          78.459225
+        ],
+        [
+          17.55915,
+          78.45912
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "car-parking",
+      "to": "kabaddi-court",
+      "distanceMeters": 12.47,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "South from the car parking onto the field.",
+      "path": [
+        [
+          17.559138,
+          78.459547
+        ],
+        [
+          17.55906,
+          78.459461
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    },
+    {
+      "from": "volleyball-court",
+      "to": "kabaddi-court",
+      "distanceMeters": 37.66,
+      "source": "google-maps-measure-distance",
+      "measurementType": "walkway",
+      "verified": false,
+      "walkable": true,
+      "confidence": "medium",
+      "crossCheck": null,
+      "notes": "Across the field between the two courts.",
+      "path": [
+        [
+          17.55915,
+          78.45912
+        ],
+        [
+          17.55906,
+          78.459461
+        ]
+      ],
+      "accessibility": {
+        "accessible": null,
+        "stepFree": null,
+        "stairs": null,
+        "ramp": null,
+        "lift": null,
+        "surface": null,
+        "slope": null,
+        "widthMeters": null,
+        "obstacle": null,
+        "verified": false,
+        "source": null
+      },
+      "closed": false
+    }
+  ],
+  "indoor": {
+    "status": "not_collected",
+    "notes": "Indoor nodes (entrance, corridor, stairs, lift, rooms) are added here later with the same edge format. Vertical moves are ordinary edges, e.g. C-G-STAIRS -> C-1-STAIRS.",
+    "nodes": [],
+    "connections": []
+  },
+  "accessibilityNotes": "Accessibility fields are null = NOT SURVEYED. Satellite imagery cannot establish steps, kerbs, ramps or slopes, so none were filled in. Fill them from a campus walk-through and set verified: true."
+}

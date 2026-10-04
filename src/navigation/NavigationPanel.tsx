@@ -28,6 +28,12 @@ interface Props {
   onReadAloud: () => void
   onTogglePause: () => void
   onExit: () => void
+  /** 'sheet' = inside the phone bottom sheet (full width, no card chrome). */
+  variant?: 'panel' | 'sheet'
+  /** Where the start point came from, e.g. "Your location (±8 m)" or "Default start: Block B". */
+  fromNote?: string | null
+  /** Shown when the device location could provide the start point. */
+  onUseMyLocation?: (() => void) | null
 }
 
 export function NavigationPanel({
@@ -45,7 +51,11 @@ export function NavigationPanel({
   walkingSpeed,
   onSpeed,
   onReadAloud,
+  variant = 'panel',
+  fromNote,
+  onUseMyLocation,
 }: Props) {
+  const sheet = variant === 'sheet'
   const [follow, setFollow] = useState(true)
   const route = state.routes[state.selectedRoute]
   const navigating = state.phase === 'NAVIGATING'
@@ -55,21 +65,23 @@ export function NavigationPanel({
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -24 }}
+      initial={sheet ? false : { opacity: 0, x: -24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="glass flex max-h-full w-[min(380px,calc(100vw-32px))] flex-col rounded-2xl"
+      className={sheet ? 'flex w-full flex-col' : 'glass flex max-h-full w-[min(380px,calc(100vw-32px))] flex-col rounded-2xl'}
     >
-      <div className="flex items-center justify-between gap-2 px-4 pt-4">
-        <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-white/90">Where do you want to go?</h2>
-        <button
+      <div className={`flex items-center justify-between gap-2 px-4 ${sheet ? 'pt-0' : 'pt-4'}`}>
+        <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-white/90">
+          {navigating && sheet ? 'Navigating' : 'Where do you want to go?'}
+        </h2>
+        {!sheet && <button
           onClick={() => setCollapsed((c) => !c)}
           className="rounded-lg px-2 py-1 text-xs text-white/60 hover:bg-white/10"
           aria-expanded={!collapsed}
           aria-label={collapsed ? 'Expand panel' : 'Collapse panel'}
         >
           {collapsed ? '▾' : '▴'}
-        </button>
+        </button>}
       </div>
       {collapsed ? (
         <div className="px-4 pb-4 pt-1 text-xs text-white/60">
@@ -77,8 +89,18 @@ export function NavigationPanel({
         </div>
       ) : (
       <>
-      <div className="space-y-3 border-b border-white/10 p-4 pt-3">
+      {!(sheet && navigating) && <div className="space-y-3 border-b border-white/10 p-4 pt-3">
         <LocationSelector label="From" value={state.from} exclude={state.to} onChange={(id) => onEndpoints(id, state.to)} />
+        {(fromNote || onUseMyLocation) && (
+          <div className="-mt-1.5 flex items-center justify-between gap-2 text-[11.5px] text-white/60">
+            <span>{fromNote}</span>
+            {onUseMyLocation && (
+              <button onClick={onUseMyLocation} className="shrink-0 rounded-full bg-[#1a73e8]/25 px-2.5 py-1 font-semibold text-[#8ab4f8] hover:bg-[#1a73e8]/35">
+                ◎ Use my location
+              </button>
+            )}
+          </div>
+        )}
         <div className="relative">
           <button
             onClick={() => onEndpoints(state.to, state.from)}
@@ -113,7 +135,7 @@ export function NavigationPanel({
         >
           Calculate Route
         </button>
-      </div>
+      </div>}
 
       {noRoute && <NoAccessibleRoute mode={state.mode} blocker={state.blocker} />}
 

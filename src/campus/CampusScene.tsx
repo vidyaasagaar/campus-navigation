@@ -1,17 +1,19 @@
-import { OrbitControls } from '@react-three/drei'
+import { MapControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, type MutableRefObject, type RefObject } from 'react'
 import * as THREE from 'three'
-import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
+import type { MapControls as MapControlsImpl } from 'three-stdlib'
 import { buildingModels } from '../data/campusModels'
 import { toLocal } from '../data/geo'
 import { easeInOutCubic, easeOutCubic } from '../globe/CameraFlight'
 import { ScreenProjector, type Anchor } from '../components/ScreenProjector'
 import { RouteRenderer, SegmentLabelElements, segmentAnchors, type MarkerState } from '../navigation/RouteRenderer'
 import type { RouteGeometry } from '../navigation/routeGeometry'
+import type { PositionFix } from '../navigation/session/locationFilter'
 import type { NavTarget } from '../navigation/session/useNavigationSession'
 import { Building } from './Buildings'
 import { CampusLabelElements, NodeMarkers, nodeLabelAnchors, type NodeState } from './CampusLabels'
+import { MyLocationMarker } from './MyLocationMarker'
 import { Surfaces } from './Surfaces'
 import { Trees, Walkways } from './Walkways'
 
@@ -53,6 +55,14 @@ export interface CampusSceneProps {
   navTarget: MutableRefObject<NavTarget>
   resetSignal: number
   onPick: (id: string) => void
+  /** The device's real GPS position (blue dot), if available. */
+  myLocation?: PositionFix | null
+  /** Increment to fly the camera to `myLocation` ("my location" button). */
+  locateSignal?: number
+  /** Phones: lighter shadows and pixel ratio. */
+  lowPower?: boolean
+  /** Phones open zoomed in on this point (your location or Block B) instead of the whole campus. */
+  home?: { lat: number; lng: number } | null
 }
 
 export default function CampusScene(props: CampusSceneProps) {
@@ -69,7 +79,7 @@ export default function CampusScene(props: CampusSceneProps) {
     <div className="relative h-full w-full">
       <Canvas
         shadows
-        dpr={[1, 2]}
+        dpr={props.lowPower ? [1, 1.5] : [1, 2]}
         camera={{ fov: 45, near: 1, far: 12000, position: [LANDING.target.x, 2600, LANDING.target.z + 1] }}
         gl={{ antialias: true }}
       >
@@ -104,7 +114,7 @@ function SceneContents(props: CampusSceneProps & { anchors: Anchor[]; overlay: R
         intensity={2.1}
         color="#fff4e2"
         castShadow
-        shadow-mapSize={[4096, 4096]}
+        shadow-mapSize={props.lowPower ? [2048, 2048] : [4096, 4096]}
         shadow-camera-left={-600}
         shadow-camera-right={600}
         shadow-camera-top={600}
@@ -121,6 +131,7 @@ function SceneContents(props: CampusSceneProps & { anchors: Anchor[]; overlay: R
         <Building key={m.id} model={m} highlight={highlight(m.id)} />
       ))}
       <NodeMarkers nodeStates={props.nodeStates} />
+      {props.myLocation && <MyLocationMarker fix={props.myLocation} />}
       <ScreenProjector anchors={props.anchors} container={props.overlay} />
       {props.route && (
         <RouteRenderer
@@ -191,9 +202,12 @@ function CameraRig({
   following,
   resetSignal,
   marker,
+  myLocation,
+  locateSignal = 0,
+  home,
 }: CampusSceneProps & { marker: MutableRefObject<MarkerState> }) {
   const { camera, clock } = useThree()
-  const controls = useRef<OrbitControlsImpl>(null)
+  const controls = useRef<MapControlsImpl>(null)
   const tween = useRef<Tween | null>(null)
   const target = useRef(LANDING.target.clone())
 
@@ -209,7 +223,13 @@ function CameraRig({
     }
   }
 
-  const landing = () => frameArea(camera, bounds.center, bounds.width, bounds.depth)
+  const landing = () => {
+    if (home) {
+      const [x, z] = toLocal(home)
+      return frameArea(camera, new THREE.Vector3(x, 0, z), 300, 300)
+    }
+    return frameArea(camera, bounds.center, bounds.width, bounds.depth)
+  }
 
   // Arrival: descend from high altitude into the landing perspective.
   useEffect(() => {
@@ -228,6 +248,16 @@ function CameraRig({
     animateTo(l.position, l.target, 1.4)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetSignal])
+
+  // "My location" button: fly to the blue dot, like a map app.
+  useEffect(() => {
+    if (locateSignal === 0 || !myLocation) return
+    const [x, z] = toLocal(myLocation)
+    const center = new THREE.Vector3(x, 0, z)
+    const f = frameArea(camera, center, 220, 220)
+    animateTo(f.position, f.target, 1.2)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locateSignal])
 
   // Frame a newly calculated route.
   useEffect(() => {
@@ -281,14 +311,17 @@ function CameraRig({
   })
 
   return (
-    <OrbitControls
+    // Map-style controls: drag / one finger pans, pinch zooms, two fingers (or right-drag) rotate and tilt.
+    <MapControls
       ref={controls}
       makeDefault
       enableDamping
       dampingFactor={0.08}
+      screenSpacePanning={false}
       maxPolarAngle={Math.PI * 0.47}
       minDistance={25}
       maxDistance={2400}
+      zoomToCursor
       target={LANDING.target}
     />
   )

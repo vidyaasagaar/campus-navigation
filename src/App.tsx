@@ -7,6 +7,8 @@ import { dijkstra } from './algorithms/dijkstra'
 import { traceAt } from './algorithms/traceState'
 import type { NodeState } from './campus/CampusLabels'
 import { AccessibilityMenu } from './components/AccessibilityMenu'
+import { BottomSheet, type SheetSnap } from './components/BottomSheet'
+import { MobileTopBar, type MenuItem } from './components/MobileTopBar'
 import { AlgorithmPanel } from './components/AlgorithmPanel'
 import { DataPanel } from './components/DataPanel'
 import { FloorPanel } from './components/FloorPanel'
@@ -22,6 +24,10 @@ import { speak } from './voice/speech'
 import { VoiceControl } from './voice/VoiceControl'
 import type { RouteMode } from './algorithms/accessibility'
 import { useNavigationState } from './state/navigationState'
+import { useIsMobile } from './state/useIsMobile'
+import { useDeviceLocation } from './location/useDeviceLocation'
+import { toLocal } from './data/geo'
+import type { PositionFix } from './navigation/session/locationFilter'
 
 const GlobeScene = lazy(() => import('./globe/GlobeScene'))
 const CampusScene = lazy(() => import('./campus/CampusScene'))
@@ -29,6 +35,21 @@ const CampusScene = lazy(() => import('./campus/CampusScene'))
 const FADE_START = 0.8
 
 const places = campusGraph.allNodes().filter((n) => n.kind !== 'junction')
+
+/** Where the team is based — the start point when the phone's location can't be used. */
+const DEFAULT_START = 'block-b'
+
+/** Nearest named place (not a road junction) to a GPS fix — used as "Your location" start. */
+function nearestPlace(fix: PositionFix) {
+  const [x, z] = toLocal(fix)
+  let best = { id: DEFAULT_START, distance: Infinity }
+  for (const n of places) {
+    const [nx, nz] = toLocal(n.position)
+    const d = Math.hypot(x - nx, z - nz)
+    if (d < best.distance) best = { id: n.id, distance: d }
+  }
+  return best
+}
 
 /** Dijkstra (+ Yen alternatives) under the route mode's constraints. */
 function computeRoutes(from: string, to: string, mode: RouteMode) {
@@ -49,12 +70,18 @@ function computeRoutes(from: string, to: string, mode: RouteMode) {
 
 export default function App() {
   const [state, dispatch] = useNavigationState()
+  const isMobile = useIsMobile()
   const a11y = useAccessibilitySettings()
   const { reducedMotion } = a11y
   const [a11yOpen, setA11yOpen] = useState(false)
   const [flight, setFlight] = useState(0)
   const [showTitle, setShowTitle] = useState(false)
-  const [globeGone, setGlobeGone] = useState(false)
+  // Phones open straight onto the campus map (no globe), like a map app.
+  const [globeGone, setGlobeGone] = useState(() => window.matchMedia('(max-width: 767px)').matches)
+  const [sheetSnap, setSheetSnap] = useState<SheetSnap>('half')
+  const [locateSignal, setLocateSignal] = useState(0)
+  /** How the current start point was chosen. */
+  const [fromSource, setFromSource] = useState<'gps' | 'default' | 'manual'>('default')
   const [panel, setPanel] = useState<'algorithm' | 'data' | 'floors' | null>(null)
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
@@ -64,6 +91,80 @@ export default function App() {
   const onGlobe = phase === 'GLOBAL' || phase === 'SEARCH'
   const inCampus = !onGlobe && phase !== 'GLOBE_FLIGHT'
   const campusOpacity = inCampus ? 1 : phase === 'GLOBE_FLIGHT' ? Math.max(0, (flight - FADE_START) / (1 - FADE_START)) : 0
+
+  useEffect(() => {
+    if (isMobile && (phase === 'GLOBAL' || phase === 'SEARCH')) {
+      setGlobeGone(true)
+      dispatch({ type: 'SKIP_TO_CAMPUS' })
+      setShowTitle(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile])
+
+  // Real device location: phones ask as soon as the campus opens; desktop asks on "Use my location".
+  const device = useDeviceLocation(isMobile && inCampus)
+  const here = device.fix && device.usable ? nearestPlace(device.fix) : null
+
+  // Default start: your location when it is on campus and accurate enough, otherwise Block B.
+  useEffect(() => {
+    if (phase !== 'ROUTE_SELECTION') return
+    if (!state.from) {
+      dispatch({ type: 'SET_ENDPOINTS', from: here?.id ?? DEFAULT_START, to: state.to, room: state.room })
+      setFromSource(here ? 'gps' : 'default')
+    } else if (fromSource === 'default' && here) {
+      // A good fix arrived after we fell back to Block B — start from the real position.
+      if (here.id !== state.from) dispatch({ type: 'SET_ENDPOINTS', from: here.id, to: state.to, room: state.room })
+      setFromSource('gps')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, here?.id])
+
+  // First good fix on a phone: centre the map on you once, like a map app.
+  const [centredOnMe, setCentredOnMe] = useState(false)
+  useEffect(() => {
+    if (isMobile && device.usable && !centredOnMe && phase !== 'NAVIGATING') {
+      setCentredOnMe(true)
+      setLocateSignal((n) => n + 1)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [device.usable])
+
+  const startFromMyLocation = () => {
+    if (!device.fix || device.status === 'idle' || device.status === 'denied') {
+      device.request()
+      return
+    }
+    if (here) {
+      dispatch({ type: 'SET_ENDPOINTS', from: here.id, to: state.to === here.id ? null : state.to, room: state.room })
+      setFromSource('gps')
+      if (state.to && state.to !== here.id) setPendingCalc(true)
+    }
+  }
+
+  const locationReason = (() => {
+    switch (device.status) {
+      case 'insecure':
+        return 'location needs the https:// link'
+      case 'denied':
+        return 'location permission is off'
+      case 'unavailable':
+        return 'location unavailable'
+      case 'idle':
+        return 'location not shared'
+      case 'locating':
+        return 'waiting for GPS…'
+    }
+    if (device.fix && !device.onCampus) return "you're not on campus"
+    if (device.fix && !device.usable) return `GPS ±${Math.round(device.fix.accuracy)} m is too rough`
+    return null
+  })()
+  const fromNote =
+    fromSource === 'gps' && here && state.from === here.id && device.fix
+      ? `📍 Your location — near ${campusGraph.node(here.id).name} (±${Math.round(device.fix.accuracy)} m)`
+      : fromSource === 'default' && state.from === DEFAULT_START
+        ? `Default start: Block B${locationReason ? ` (${locationReason})` : ''}`
+        : null
+  const canUseMyLocation = fromSource !== 'gps' && device.status !== 'insecure' && device.status !== 'unavailable'
 
   const handleArrive = useCallback(() => {
     dispatch({ type: 'ARRIVED' })
@@ -245,11 +346,58 @@ export default function App() {
   }, [trace, selected])
 
   const pick = (id: string) => {
-    // Clicking labels fills From, then To, then starts over.
+    // Tapping a place = directions to it from the current start (like a map app).
     if (phase === 'NAVIGATING') return
-    if (state.from && !state.to && id !== state.from) dispatch({ type: 'SET_ENDPOINTS', from: state.from, to: id })
-    else dispatch({ type: 'SET_ENDPOINTS', from: id, to: null })
+    if (!state.from) {
+      dispatch({ type: 'SET_ENDPOINTS', from: id, to: null })
+      setFromSource('manual')
+    } else if (id !== state.from) {
+      dispatch({ type: 'SET_ENDPOINTS', from: state.from, to: id })
+      setPendingCalc(true)
+      setSheetSnap('half')
+    }
   }
+
+  const onMenu = (item: MenuItem) => {
+    setVoiceOpen(item === 'voice')
+    setA11yOpen(item === 'settings')
+    if (item === 'algorithm' || item === 'floors' || item === 'data') setPanel(item)
+    else setPanel(null)
+    if (item === 'reset') setResetSignal((n) => n + 1)
+  }
+
+  const locate = () => {
+    if (!device.fix) device.request()
+    else setLocateSignal((n) => n + 1)
+  }
+
+  const navigationPanel = (variant: 'panel' | 'sheet') => (
+    <NavigationPanel
+      variant={variant}
+      fromNote={fromNote}
+      onUseMyLocation={canUseMyLocation ? startFromMyLocation : null}
+      state={state}
+      session={session.view}
+      walkingSpeed={a11y.settings.walkingSpeed}
+      onSpeed={(speed) => dispatch({ type: 'SET_SIM_SPEED', speed })}
+      onReadAloud={readAloud}
+      assessment={assessment}
+      rejectedCount={state.dijkstra?.rejected.length ?? 0}
+      onMode={(mode) => dispatch({ type: 'SET_MODE', mode })}
+      onEndpoints={(from, to) => {
+        if (from !== state.from) setFromSource('manual')
+        dispatch({ type: 'SET_ENDPOINTS', from, to })
+      }}
+      onCalculate={() => calculate()}
+      onSelectRoute={(i) => dispatch({ type: 'SELECT_ROUTE', index: i })}
+      onStart={(follow, source) => {
+        dispatch({ type: 'START_NAVIGATION', follow, source })
+        if (variant === 'sheet') setSheetSnap('half')
+      }}
+      onTogglePause={() => dispatch({ type: 'TOGGLE_PAUSE' })}
+      onExit={() => dispatch({ type: 'EXIT_NAVIGATION' })}
+    />
+  )
 
   return (
     <MotionConfig reducedMotion={reducedMotion ? 'always' : 'never'}>
@@ -269,7 +417,15 @@ export default function App() {
         </div>
       )}
       {!onGlobe && (
-        <div className="absolute inset-0" style={{ opacity: campusOpacity, pointerEvents: inCampus ? 'auto' : 'none' }}>
+        <div
+          className="absolute inset-x-0 top-0 transition-[bottom] duration-300"
+          // Phones: the map fills the area above the bottom sheet, so the campus is never hidden behind it.
+          style={{
+            opacity: campusOpacity,
+            pointerEvents: inCampus ? 'auto' : 'none',
+            bottom: isMobile && inCampus ? (sheetSnap === 'peek' ? 'calc(150px + env(safe-area-inset-bottom) - 24px)' : 'calc(52dvh - 24px)') : 0,
+          }}
+        >
           <Suspense fallback={null}>
             <CampusScene
               intro={phase !== 'GLOBE_FLIGHT'}
@@ -285,13 +441,17 @@ export default function App() {
               navTarget={session.target}
               resetSignal={resetSignal}
               onPick={pick}
+              myLocation={device.fix}
+              locateSignal={locateSignal}
+              lowPower={isMobile}
+              home={isMobile ? (device.usable && device.fix ? device.fix : campusGraph.node(DEFAULT_START).position) : null}
             />
           </Suspense>
         </div>
       )}
 
       {/* Brand */}
-      <div className="pointer-events-none absolute left-4 top-4 z-20 flex items-center gap-2.5">
+      <div className={`pointer-events-none absolute left-4 top-4 z-20 items-center gap-2.5 ${isMobile && inCampus ? 'hidden' : 'flex'}`}>
         <div className="grid h-8 w-8 place-items-center rounded-full bg-[#0b1724]/80 ring-1 ring-white/10">
           <svg viewBox="0 0 24 24" className="h-4 w-4">
             <path d="M12 3l5 15-5-3.4L7 18z" fill="#f2552c" />
@@ -304,8 +464,14 @@ export default function App() {
       </div>
 
       {/* Accessibility settings — available on every screen */}
-      <div className="absolute right-4 top-4 z-40 flex max-w-[calc(100vw-32px)] flex-wrap items-start justify-end gap-2">
-        {inCampus && (
+      <div
+        className={
+          isMobile && inCampus
+            ? 'pointer-events-none fixed inset-x-0 top-[72px] z-50 flex flex-col items-center gap-2 px-3 [&>*]:pointer-events-auto'
+            : 'absolute right-4 top-4 z-40 flex max-w-[calc(100vw-32px)] flex-wrap items-start justify-end gap-2'
+        }
+      >
+        {inCampus && !isMobile && (
           <ToolbarButton
             active={voiceOpen}
             aria-expanded={voiceOpen}
@@ -327,7 +493,7 @@ export default function App() {
             onClose={() => setVoiceOpen(false)}
           />
         )}
-        <ToolbarButton
+        {!(isMobile && inCampus) && <ToolbarButton
           active={a11yOpen}
           aria-expanded={a11yOpen}
           aria-label="Accessibility settings"
@@ -338,7 +504,7 @@ export default function App() {
           }}
         >
           ♿
-        </ToolbarButton>
+        </ToolbarButton>}
         {a11yOpen && (
           <AccessibilityMenu
             settings={a11y.settings}
@@ -410,29 +576,69 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Campus UI */}
-      {inCampus && !showTitle && (
+      {/* Campus UI — phone: search bar + bottom sheet + locate button (map-app layout) */}
+      {inCampus && isMobile && (
         <>
-          <div className="absolute bottom-4 left-4 top-[68px] z-20 flex flex-col">
-            <NavigationPanel
-              state={state}
-              session={session.view}
-              walkingSpeed={a11y.settings.walkingSpeed}
-              onSpeed={(speed) => dispatch({ type: 'SET_SIM_SPEED', speed })}
-              onReadAloud={readAloud}
-              assessment={assessment}
-              rejectedCount={state.dijkstra?.rejected.length ?? 0}
-              onMode={(mode) => dispatch({ type: 'SET_MODE', mode })}
-              onEndpoints={(from, to) => dispatch({ type: 'SET_ENDPOINTS', from, to })}
-              onCalculate={() => calculate()}
-              onSelectRoute={(i) => dispatch({ type: 'SELECT_ROUTE', index: i })}
-              onStart={(follow, source) => {
-                dispatch({ type: 'START_NAVIGATION', follow, source })
-              }}
-              onTogglePause={() => dispatch({ type: 'TOGGLE_PAUSE' })}
-              onExit={() => dispatch({ type: 'EXIT_NAVIGATION' })}
-            />
-          </div>
+          <MobileTopBar
+            onPick={(id) => {
+              if (phase === 'NAVIGATING') dispatch({ type: 'EXIT_NAVIGATION' })
+              pick(id)
+            }}
+            onMenu={onMenu}
+          />
+          <button
+            onClick={locate}
+            aria-label="Show my location"
+            className={`fixed right-4 z-30 grid h-12 w-12 place-items-center rounded-full bg-white text-2xl shadow-[0_4px_14px_rgba(0,0,0,0.3)] transition-[bottom] duration-300 ${
+              device.status === 'live' ? 'text-[#1a73e8]' : 'text-[#5f6b78]'
+            }`}
+            style={{ bottom: `calc(${sheetSnap === 'peek' ? '150px' : '52dvh'} + 14px + env(safe-area-inset-bottom))` }}
+          >
+            ◎
+          </button>
+          {!showTitle && (
+            <BottomSheet snap={sheetSnap} onSnap={setSheetSnap}>
+              {navigationPanel('sheet')}
+            </BottomSheet>
+          )}
+          {panel && (
+            <div className="fixed inset-x-0 bottom-0 top-[70px] z-50 flex flex-col items-center px-3 pb-3">
+            {panel === 'algorithm' && (
+              <AlgorithmPanel
+                result={state.dijkstra}
+                stepIndex={step}
+                playing={playing}
+                onStep={(i) => {
+                  setStep(i)
+                }}
+                onTogglePlay={() => {
+                  if (!playing && state.dijkstra && step >= state.dijkstra.steps.length - 1) setStep(0)
+                  setPlaying((p) => !p)
+                }}
+                onClose={() => setPanel(null)}
+              />
+            )}
+            {panel === 'data' && <DataPanel onClose={() => setPanel(null)} />}
+            {panel === 'floors' && (
+              <FloorPanel
+                initialBlock={state.room && state.to ? state.to : undefined}
+                selectedRoom={state.room}
+                onRouteToRoom={(blockId, room) => {
+                  dispatch({ type: 'SET_ENDPOINTS', from: state.from, to: blockId, room })
+                  setPanel(null)
+                }}
+                onClose={() => setPanel(null)}
+              />
+            )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Campus UI — desktop */}
+      {inCampus && !isMobile && !showTitle && (
+        <>
+          <div className="absolute bottom-4 left-4 top-[68px] z-20 flex flex-col">{navigationPanel('panel')}</div>
 
           <div className="absolute right-[68px] top-4 z-30 flex flex-wrap justify-end gap-2" role="toolbar" aria-label="Campus tools">
             <ToolbarButton active={panel === 'algorithm'} aria-pressed={panel === 'algorithm'} onClick={() => setPanel(panel === 'algorithm' ? null : 'algorithm')}>
@@ -443,6 +649,9 @@ export default function App() {
             </ToolbarButton>
             <ToolbarButton active={panel === 'data'} aria-pressed={panel === 'data'} onClick={() => setPanel(panel === 'data' ? null : 'data')}>
               Data
+            </ToolbarButton>
+            <ToolbarButton onClick={locate} aria-label="Show my location" title="Show my location">
+              ◎
             </ToolbarButton>
             <ToolbarButton
               onClick={() => setResetSignal((n) => n + 1)}

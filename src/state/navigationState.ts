@@ -31,6 +31,8 @@ export type NavAction =
   | { type: 'OPEN_SEARCH' }
   | { type: 'CLOSE_SEARCH' }
   | { type: 'START_FLIGHT' }
+  /** Phones open straight onto the campus map, like a map app (no globe flight). */
+  | { type: 'SKIP_TO_CAMPUS' }
   | { type: 'ARRIVED' }
   | { type: 'OPEN_ROUTE_SELECTION' }
   | { type: 'SET_ENDPOINTS'; from: string | null; to: string | null; room?: string | null }
@@ -69,6 +71,8 @@ function reducer(s: NavState, a: NavAction): NavState {
       return s.phase === 'SEARCH' ? { ...s, phase: 'GLOBAL' } : s
     case 'START_FLIGHT':
       return s.phase === 'GLOBAL' || s.phase === 'SEARCH' ? { ...s, phase: 'GLOBE_FLIGHT' } : s
+    case 'SKIP_TO_CAMPUS':
+      return s.phase === 'GLOBAL' || s.phase === 'SEARCH' ? { ...s, phase: 'CAMPUS' } : s
     case 'ARRIVED':
       return s.phase === 'GLOBE_FLIGHT' ? { ...s, phase: 'CAMPUS' } : s
     case 'OPEN_ROUTE_SELECTION':

@@ -1,0 +1,11 @@
+{
+  "name": "MRTC Campus Navigator",
+  "short_name": "MRTC Nav",
+  "description": "Shortest walking routes on the MRTC campus (Dijkstra on a measured campus graph).",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1724",
+  "theme_color": "#0b1724",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
